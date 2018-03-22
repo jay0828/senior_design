@@ -48,10 +48,12 @@ import com.pi4j.io.gpio.PinState;
 import com.pi4j.io.gpio.RaspiPin;
 
 public class SecureNorthTrafficLight extends CoapServer{
+
 	final static GpioController gpio = GpioFactory.getInstance();
 	final static GpioPinDigitalOutput redPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_00, "RED", PinState.LOW);
-	//final GpioPinDigitalOutput greenPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PinState.LOW);
-	//final GpioPinDigitalOutput bluePin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, "BLUE", PinState.LOW);
+	final static GpioPinDigitalOutput greenPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PinState.LOW);
+	final static GpioPinDigitalOutput yellowPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, "YELLOW", PinState.LOW);
+	static boolean isNewResourceCalled = false;
 
 	static {
 		CaliforniumLogger.initialize();
@@ -74,15 +76,36 @@ public class SecureNorthTrafficLight extends CoapServer{
 		server.add(new CoapResource("reset") {
 			@Override
 			public void handleGET(CoapExchange exchange) {
-				exchange.respond(ResponseCode.CONTENT, "LED is Red.");
-				redPin.high();
-				try{
-					Thread.sleep(3000);
-					redPin.low();
+				exchange.respond(ResponseCode.CONTENT, "Regular Traffic.");
+				isNewResourceCalled = false;
+				while(true)
+				{
+					//green, wait 3 sec
+					greenPin.high();
+					for(int i=0; i<=3000; i=i+25){
+						try{
+							Thread.sleep(25);
+						}
+						catch(InterruptedException e){
+							greenPin.low();
+						}
+						if(isNewResourceCalled){
+							greenPin.low();
+							break;
+						}
+					}
+					greenPin.low();
+					//yellow, wait 2 sec
+					//red, wait 5 sec
 				}
-				catch(InterruptedException e){
-					redPin.low();
-				}
+			}
+		});
+		server.add(new CoapResource("ambulance_north") {
+			@Override
+			public void handleGET(CoapExchange exchange) {
+				exchange.respond(ResponseCode.CONTENT, "Ambulance Coming from the South.");
+				isNewResourceCalled = true;
+				
 			}
 		});
 		// ETSI Plugtest environment

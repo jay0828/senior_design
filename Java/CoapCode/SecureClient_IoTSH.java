@@ -49,7 +49,7 @@ public class SecureClient_IoTSH {
 	private static final String TRUST_STORE_LOCATION = "certs/trustStore.jks";
 	private static final String RESET_URI = "coaps://172.29.89.63/reset";
 	//TODO
-	//private static final String AMBULANCE_NORTH_URI = "coaps://172.29.64.100/ambulance_north";
+	private static final String AMBULANCE_NORTH_URI = "coaps://172.29.89.63/ambulance_north";
 	//private static final String AMBULANCE_SOUTH_URI = "coaps://172.29.64.100/ambulance_south";
 	//private static final String AMBULANCE_EAST_URI = "coaps://172.29.64.100/ambulance_east";
 	//private static final String AMBULANCE_WEST_URI = "coaps://172.29.64.100/ambulance_west";
@@ -91,7 +91,7 @@ public class SecureClient_IoTSH {
 
 		CoapResponse response = null;
 		try {
-			URI rst_uri = new URI(RESET_URI);
+			URI rst_uri = new URI(AMBULANCE_NORTH_URI);
 
 			CoapClient client = new CoapClient(rst_uri);
 			client.setEndpoint(new CoapEndpoint(dtlsConnector, NetworkConfig.getStandard()));
