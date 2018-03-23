@@ -1,0 +1,9 @@
+jdb as a java debugger
+
+try setting boolean to true within reset resource scope
+
+try using a static setter function for isNewResourceCalled
+
+try building a main function that instantiates the server
+
+try removing static keyword from boolean
