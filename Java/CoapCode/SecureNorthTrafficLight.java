@@ -79,10 +79,10 @@ public class SecureNorthTrafficLight extends CoapServer{
 			@Override
 			public void handleGET(CoapExchange exchange) {
 				exchange.respond(ResponseCode.CONTENT, "Regular Traffic.");
-				isNewResourceCalled = false;
 				while(true)
 				{
 					isForLoopBroken = false;
+					isNewResourceCalled = false;
 					if(ambulanceFinished){
 						while(true){
 							//green, wait 3 sec
@@ -107,8 +107,56 @@ public class SecureNorthTrafficLight extends CoapServer{
 								}
 							}
 							greenPin.low();
+							if(isForLoopBroken){
+								break;
+							}
 							//yellow, wait 2 sec
+							yellowPin.high();
+							for(int i=0; i<=2000; i=i+25){
+								try{
+									Thread.sleep(25);
+								}
+								catch(InterruptedException e){
+									yellowPin.low();
+								}
+								if(isNewResourceCalled){
+									yellowPin.low();
+									try{
+										Thread.sleep(1000);
+									}
+									catch(InterruptedException e){
+										yellowPin.low();
+									}
+									isForLoopBroken = true;
+									break;
+								}
+							}
+							yellowPin.low();
+							if(isForLoopBroken){
+								break;
+							}
 							//red, wait 5 sec
+							redPin.high();
+							for(int i=0; i<=5000; i=i+25){
+								try{
+									Thread.sleep(25);
+								}
+								catch(InterruptedException e){
+									redPin.low();
+								}
+								if(isNewResourceCalled){
+									redPin.low();
+									try{
+										Thread.sleep(1000);
+									}
+									catch(InterruptedException e){
+										redPin.low();
+									}
+									isForLoopBroken = true;
+									break;
+								}
+							}
+							redPin.low();
 							if(isForLoopBroken){
 								break;
 							}
@@ -124,14 +172,14 @@ public class SecureNorthTrafficLight extends CoapServer{
 				isNewResourceCalled = true;
 				ambulanceFinished = false;
 				//make north green for some time
-				redPin.high();
+				greenPin.high();
 				try{
 					Thread.sleep(1000);
 				}
 				catch(InterruptedException e){
-					redPin.low();
+					greenPin.low();
 				}
-				redPin.low();
+				greenPin.low();
 				//ambulance bool to trigger reset while loop
 				ambulanceFinished = true;
 			}
