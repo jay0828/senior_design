@@ -54,6 +54,8 @@ public class SecureNorthTrafficLight extends CoapServer{
 	final static GpioPinDigitalOutput greenPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_01, "GREEN", PinState.LOW);
 	final static GpioPinDigitalOutput yellowPin = gpio.provisionDigitalOutputPin(RaspiPin.GPIO_02, "YELLOW", PinState.LOW);
 	static boolean isNewResourceCalled = false;
+	static boolean isForLoopBroken = false;
+	static boolean ambulanceFinished = true;
 
 	static {
 		CaliforniumLogger.initialize();
@@ -80,32 +82,58 @@ public class SecureNorthTrafficLight extends CoapServer{
 				isNewResourceCalled = false;
 				while(true)
 				{
-					//green, wait 3 sec
-					greenPin.high();
-					for(int i=0; i<=3000; i=i+25){
-						try{
-							Thread.sleep(25);
-						}
-						catch(InterruptedException e){
+					isForLoopBroken = false;
+					if(ambulanceFinished){
+						while(true){
+							//green, wait 3 sec
+							greenPin.high();
+							for(int i=0; i<=3000; i=i+25){
+								try{
+									Thread.sleep(25);
+								}
+								catch(InterruptedException e){
+									greenPin.low();
+								}
+								if(isNewResourceCalled){
+									greenPin.low();
+									try{
+										Thread.sleep(1000);
+									}
+									catch(InterruptedException e){
+										greenPin.low();
+									}
+									isForLoopBroken = true;
+									break;
+								}
+							}
 							greenPin.low();
-						}
-						if(isNewResourceCalled){
-							greenPin.low();
-							break;
+							//yellow, wait 2 sec
+							//red, wait 5 sec
+							if(isForLoopBroken){
+								break;
+							}
 						}
 					}
-					greenPin.low();
-					//yellow, wait 2 sec
-					//red, wait 5 sec
 				}
 			}
 		});
 		server.add(new CoapResource("ambulance_north") {
 			@Override
 			public void handleGET(CoapExchange exchange) {
-				exchange.respond(ResponseCode.CONTENT, "Ambulance Coming from the South.");
+				exchange.respond(ResponseCode.CONTENT, "Ambulance Coming from the North.");
 				isNewResourceCalled = true;
-				
+				ambulanceFinished = false;
+				//make north green for some time
+				redPin.high();
+				try{
+					Thread.sleep(1000);
+				}
+				catch(InterruptedException e){
+					redPin.low();
+				}
+				redPin.low();
+				//ambulance bool to trigger reset while loop
+				ambulanceFinished = true;
 			}
 		});
 		// ETSI Plugtest environment

@@ -47,9 +47,9 @@ public class SecureClient_IoTSH {
 	private static final String KEY_STORE_PASSWORD = "endPass";
 	private static final String KEY_STORE_LOCATION = "certs/keyStore.jks";
 	private static final String TRUST_STORE_LOCATION = "certs/trustStore.jks";
-	private static final String RESET_URI = "coaps://172.29.89.63/reset";
+	private static final String RESET_URI = "coaps://172.29.33.182/reset";
 	//TODO
-	private static final String AMBULANCE_NORTH_URI = "coaps://172.29.89.63/ambulance_north";
+	private static final String AMBULANCE_NORTH_URI = "coaps://172.29.33.182/ambulance_north";
 	//private static final String AMBULANCE_SOUTH_URI = "coaps://172.29.64.100/ambulance_south";
 	//private static final String AMBULANCE_EAST_URI = "coaps://172.29.64.100/ambulance_east";
 	//private static final String AMBULANCE_WEST_URI = "coaps://172.29.64.100/ambulance_west";
