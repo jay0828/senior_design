@@ -49,18 +49,12 @@ public class SecureClient_AMBN {
 	private static final String TRUST_STORE_LOCATION = "certs/trustStore.jks";
 
 	//Input the ip addresses of the two traffic light servers
-	private static final String RESET_NORTH_URI = "coaps://172.29.19.69/reset";
-	private static final String RESET_WEST_URI = "coaps://172.29.23.252/reset";
 	
 	private static final String AMBULANCE_NORTH_ForNorth_URI = "coaps://172.29.19.69/ambulance_north";
 	private static final String AMBULANCE_NORTH_ForWest_URI = "coaps://172.29.23.252/ambulance_north";
-	private static final String AMBULANCE_WEST_ForNorth_URI = "coaps://172.29.19.69/ambulance_west";
-	private static final String AMBULANCE_WEST_ForWest_URI = "coaps://172.29.23.252/ambulance_west";
 
 	private DTLSConnector dtlsConnector_nn;
 	private DTLSConnector dtlsConnector_nw;
-	private DTLSConnector dtlsConnector_wn;
-	private DTLSConnector dtlsConnector_ww;
 
 	public SecureClient_AMBN() {
 		try {
@@ -87,8 +81,6 @@ public class SecureClient_AMBN {
 			builder.setTrustStore(trustedCertificates);
 			dtlsConnector_nn = new DTLSConnector(builder.build());
 			dtlsConnector_nw = new DTLSConnector(builder.build());
-			dtlsConnector_wn = new DTLSConnector(builder.build());
-			dtlsConnector_ww = new DTLSConnector(builder.build());
 
 		} catch (GeneralSecurityException | IOException e) {
 			System.err.println("Could not load the keystore");
@@ -100,20 +92,14 @@ public class SecureClient_AMBN {
 
 		CoapResponse response = null;
 		try {
-			URI rst_n_uri = new URI(RESET_NORTH_URI);
-			URI rst_w_uri = new URI(RESET_WEST_URI);
 			URI amb_nn_uri = new URI(AMBULANCE_NORTH_ForNorth_URI);
 			URI amb_nw_uri = new URI(AMBULANCE_NORTH_ForWest_URI);
-			URI amb_ww_uri = new URI(AMBULANCE_WEST_ForWest_URI);
-			URI amb_wn_uri = new URI(AMBULANCE_WEST_ForNorth_URI);
 
-			//CoapClient northN_amb_client = new CoapClient(amb_nn_uri);
+			CoapClient northN_amb_client = new CoapClient(amb_nn_uri);
 			CoapClient northW_amb_client = new CoapClient(amb_nw_uri);
-			//CoapClient westN_amb_client = new CoapClient(amb_wn_uri);
-			//CoapClient westW_amb_client = new CoapClient(amb_ww_uri);
-			//northN_amb_client.setEndpoint(new CoapEndpoint(dtlsConnector_nn, NetworkConfig.getStandard()));
+			northN_amb_client.setEndpoint(new CoapEndpoint(dtlsConnector_nn, NetworkConfig.getStandard()));
 			northW_amb_client.setEndpoint(new CoapEndpoint(dtlsConnector_nw, NetworkConfig.getStandard()));
-			//response = northN_amb_client.get();
+			response = northN_amb_client.get();
 			response = northW_amb_client.get();
 
 		} catch (URISyntaxException e) {
