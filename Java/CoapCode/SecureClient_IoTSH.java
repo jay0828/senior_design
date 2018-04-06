@@ -47,12 +47,15 @@ public class SecureClient_IoTSH {
 	private static final String KEY_STORE_PASSWORD = "endPass";
 	private static final String KEY_STORE_LOCATION = "certs/keyStore.jks";
 	private static final String TRUST_STORE_LOCATION = "certs/trustStore.jks";
-	private static final String RESET_URI = "coaps://172.29.33.182/reset";
-	//TODO
-	private static final String AMBULANCE_NORTH_URI = "coaps://172.29.33.182/ambulance_north";
-	//private static final String AMBULANCE_SOUTH_URI = "coaps://172.29.64.100/ambulance_south";
-	//private static final String AMBULANCE_EAST_URI = "coaps://172.29.64.100/ambulance_east";
-	//private static final String AMBULANCE_WEST_URI = "coaps://172.29.64.100/ambulance_west";
+
+	//Input the ip addresses of the two traffic light servers
+	private static final String RESET_NORTH_URI = "coaps://172.29.19.69/reset";
+	//private static final String RESET_WEST_URI = "coaps://172.29.33.182/reset";
+	
+	private static final String AMBULANCE_NORTH_ForNorth_URI = "coaps://172.29.19.69/ambulance_north";
+	private static final String AMBULANCE_NORTH_ForWest_URI = "coaps://172.29.33.182/ambulance_north";
+	private static final String AMBULANCE_WEST_ForNorth_URI = "coaps://172.29.64.100/ambulance_west";
+	private static final String AMBULANCE_WEST_ForWest_URI = "coaps://172.29.64.100/ambulance_west";
 
 	private DTLSConnector dtlsConnector;
 
@@ -91,11 +94,19 @@ public class SecureClient_IoTSH {
 
 		CoapResponse response = null;
 		try {
-			URI rst_uri = new URI(AMBULANCE_NORTH_URI);
+			URI rst_n_uri = new URI(RESET_NORTH_URI);
+			//URI rst_w_uri = new URI(RESET_WEST_URI);
+			URI amb_nn_uri = new URI(AMBULANCE_NORTH_ForNorth_URI);
+			URI amb_nw_uri = new URI(AMBULANCE_NORTH_ForWest_URI);
+			URI amb_ww_uri = new URI(AMBULANCE_WEST_ForWest_URI);
+			URI amb_wn_uri = new URI(AMBULANCE_WEST_ForNorth_URI);
 
-			CoapClient client = new CoapClient(rst_uri);
-			client.setEndpoint(new CoapEndpoint(dtlsConnector, NetworkConfig.getStandard()));
-			response = client.get();
+			CoapClient north_reset_client = new CoapClient(rst_n_uri);
+			//CoapClient west_reset_client = new CoapClient(rst_w_uri);
+			north_reset_client.setEndpoint(new CoapEndpoint(dtlsConnector, NetworkConfig.getStandard()));
+			//west_reset_client.setEndpoint(new CoapEndpoint(dtlsConnector, NetworkConfig.getStandard()));
+			response = north_reset_client.get();
+			//response = west_reset_client.get();
 
 		} catch (URISyntaxException e) {
 			System.err.println("Invalid URI: " + e.getMessage());
