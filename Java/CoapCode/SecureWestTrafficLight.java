@@ -85,9 +85,9 @@ public class SecureWestTrafficLight extends CoapServer{
 					isNewResourceCalled = false;
 					if(ambulanceFinished){
 						while(true){
-							//red, wait 5 sec
+							//red, wait 6 sec
 							redPin.high();
-							for(int i=0; i<=5000; i=i+25){
+							for(int i=0; i<=6000; i=i+25){
 								try{
 									Thread.sleep(25);
 								}
@@ -168,13 +168,13 @@ public class SecureWestTrafficLight extends CoapServer{
 		server.add(new CoapResource("ambulance_west") {
 			@Override
 			public void handleGET(CoapExchange exchange) {
-				exchange.respond(ResponseCode.CONTENT, "Ambulance Coming from the North.");
+				exchange.respond(ResponseCode.CONTENT, "Ambulance Coming from the West.");
 				isNewResourceCalled = true;
 				ambulanceFinished = false;
 				//make north green for some time
 				greenPin.high();
 				try{
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				}
 				catch(InterruptedException e){
 					greenPin.low();
@@ -193,7 +193,7 @@ public class SecureWestTrafficLight extends CoapServer{
 				//make north green for some time
 				redPin.high();
 				try{
-					Thread.sleep(1000);
+					Thread.sleep(4000);
 				}
 				catch(InterruptedException e){
 					redPin.low();

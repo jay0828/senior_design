@@ -50,14 +50,15 @@ public class SecureClient_IoTSH {
 
 	//Input the ip addresses of the two traffic light servers
 	private static final String RESET_NORTH_URI = "coaps://172.29.19.69/reset";
-	//private static final String RESET_WEST_URI = "coaps://172.29.33.182/reset";
+	private static final String RESET_WEST_URI = "coaps://172.29.23.252/reset";
 	
 	private static final String AMBULANCE_NORTH_ForNorth_URI = "coaps://172.29.19.69/ambulance_north";
-	private static final String AMBULANCE_NORTH_ForWest_URI = "coaps://172.29.33.182/ambulance_north";
-	private static final String AMBULANCE_WEST_ForNorth_URI = "coaps://172.29.64.100/ambulance_west";
-	private static final String AMBULANCE_WEST_ForWest_URI = "coaps://172.29.64.100/ambulance_west";
+	private static final String AMBULANCE_NORTH_ForWest_URI = "coaps://172.29.23.252/ambulance_north";
+	private static final String AMBULANCE_WEST_ForNorth_URI = "coaps://172.29.19.69/ambulance_west";
+	private static final String AMBULANCE_WEST_ForWest_URI = "coaps://172.29.23.252/ambulance_west";
 
-	private DTLSConnector dtlsConnector;
+	private DTLSConnector dtlsConnector_n;
+	private DTLSConnector dtlsConnector_w;
 
 	public SecureClient_IoTSH() {
 		try {
@@ -82,7 +83,8 @@ public class SecureClient_IoTSH {
 			builder.setIdentity((PrivateKey)keyStore.getKey("client", KEY_STORE_PASSWORD.toCharArray()),
 					keyStore.getCertificateChain("client"), true);
 			builder.setTrustStore(trustedCertificates);
-			dtlsConnector = new DTLSConnector(builder.build());
+			dtlsConnector_n = new DTLSConnector(builder.build());
+			dtlsConnector_w = new DTLSConnector(builder.build());
 
 		} catch (GeneralSecurityException | IOException e) {
 			System.err.println("Could not load the keystore");
@@ -95,18 +97,18 @@ public class SecureClient_IoTSH {
 		CoapResponse response = null;
 		try {
 			URI rst_n_uri = new URI(RESET_NORTH_URI);
-			//URI rst_w_uri = new URI(RESET_WEST_URI);
+			URI rst_w_uri = new URI(RESET_WEST_URI);
 			URI amb_nn_uri = new URI(AMBULANCE_NORTH_ForNorth_URI);
 			URI amb_nw_uri = new URI(AMBULANCE_NORTH_ForWest_URI);
 			URI amb_ww_uri = new URI(AMBULANCE_WEST_ForWest_URI);
 			URI amb_wn_uri = new URI(AMBULANCE_WEST_ForNorth_URI);
 
 			CoapClient north_reset_client = new CoapClient(rst_n_uri);
-			//CoapClient west_reset_client = new CoapClient(rst_w_uri);
-			north_reset_client.setEndpoint(new CoapEndpoint(dtlsConnector, NetworkConfig.getStandard()));
-			//west_reset_client.setEndpoint(new CoapEndpoint(dtlsConnector, NetworkConfig.getStandard()));
+			CoapClient west_reset_client = new CoapClient(rst_w_uri);
+			north_reset_client.setEndpoint(new CoapEndpoint(dtlsConnector_n, NetworkConfig.getStandard()));
+			west_reset_client.setEndpoint(new CoapEndpoint(dtlsConnector_w, NetworkConfig.getStandard()));
 			response = north_reset_client.get();
-			//response = west_reset_client.get();
+			response = west_reset_client.get();
 
 		} catch (URISyntaxException e) {
 			System.err.println("Invalid URI: " + e.getMessage());
