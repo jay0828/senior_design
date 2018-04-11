@@ -1,0 +1,39 @@
+
+project root is here: /home/pi/COAP/myCoAP/demo-apps/cf-secure
+
+source files are here: /home/pi/COAP/myCoAP/demo-apps/cf-secure/src/main/java/org/eclipse/californium/examples
+relevant files: SecureNorthTrafficLight.java,
+		SecureClient_IoTSH.java
+		SecureClient_AMBW.java
+
+set new ip addresses in client files:
+			SecureClient_IoTSH.java
+			SecureClient_AMBW.java
+		and 	SecureClient_AMBN.java on other pi.
+
+To compile:
+		SecureNorthTrafficLight.java: go to project root. $cp "pom(s).xml" pom.xml
+								  $sudo mvn clean install
+		SecureClient_IoTSH.java: go to project root. $cp "pom_client_IoTSH.xml" pom.xml
+							     $sudo mvn clean install
+		SecureClient_AMBW.java: go to project root. $cp "pom(aw).xml" pom.xml
+						   	    $sudo mvn clean install
+
+To Run:
+$cd /home/pi/COAP/myCoAP/demo-apps/run (snapshot files live here).
+
+Run traffic light servers on individual pis.
+$java -jar cf-secure-north_server-1.1.0-SNAPSHOT.jar
+
+Run regular traffic
+$java -jar cf-secure-client_IoTSH-1.1.0-SNAPSHOT.jar
+
+Run Ambulance interrupt from west
+$java -jar  cf-secure-client_AMBW-1.1.0-SNAPSHOT.jar
+
+TODO (Currently on other pi)
+Run Ambulance interrupt from north
+$java -jar  cf-secure-client_AMBN-1.1.0-SNAPSHOT.jar
+
+
+	
